@@ -59,6 +59,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     private double r;
 
+    // 是否开始游戏
     private int a;
 
     private int u;
@@ -117,11 +118,13 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
     public void base() {
         // 球体
         _ball = 16D;
-        // 起始点和长
+        // 边界起始点和长
         c = new double[] { 40D, (double) (getWidth() - 40) };
-        // 起始点和宽
+        // 边界起始点和宽
         d = new double[] { c[0], (double) getHeight() - c[0] };
+        // 球台起始点和长
         e = new double[] { c[0] + 20D, (double) (getWidth() / 2), c[1] - 20D };
+        // 球台起始点和宽
         f = new double[] { d[0] + 20D, d[1] - 20D };
     }
 
@@ -414,13 +417,14 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
     }
 
     public void makeScreen(Graphics screenGraphics) {
-
         screenGraphics.drawImage(_table, 0, 0, null);
+        // 设置白球
         if (q[0]) {
             _graphics.setColor(Color.WHITE);
             _graphics.fillOval((int) (i[0] - r), (int) (j[0] - r),
                     (int) (r * 2D), (int) (r * 2D));
         }
+        // 设置红球
         screenGraphics.setColor(Color.RED);
         for (int i1 = 1; i1 < countBall; i1++)
             if (q[i1])
@@ -558,6 +562,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         v = x;
     }
 
+    // 按住并拖动鼠标
     public void mouseDragged(MouseEvent mouseevent) {
         w = mouseevent.getX();
         x = mouseevent.getY();
