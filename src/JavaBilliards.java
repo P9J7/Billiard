@@ -239,9 +239,9 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         }
     }
 
-    /** */
     /**
      * 线程处理
+     * 支持多开
      */
     public void run() {
         long timeStart;
@@ -298,6 +298,10 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     }
 
+    /**
+     * 球的整个处理过程
+     *
+     */
     public void course() {
         // 限制区域
         limit();
@@ -349,11 +353,8 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                             k[i1] = 0.0D;
                             l[i1] = 0.0D;
                         }
-
                 }
-
             }
-
     }
 
     /***
@@ -494,9 +495,13 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
      *
      */
     public void makeHelper(Graphics screenGraphics) {
+        // 鼠标到白球直线距离
         double d1 = Math.hypot(i[0] - (double) u, j[0] - (double) v);
+        // sin
         double d2 = ((double) u - i[0]) / d1;
+        // cos
         double d3 = ((double) v - j[0]) / d1;
+        // 球杆的动态
         double d4 = y ? n() / 10D : 1.0D;
         // 球杆起点X坐标
         double d5 = i[0] + d2 * (r + d4);
@@ -509,6 +514,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         screenGraphics.setColor(Color.ORANGE);
         screenGraphics.drawLine((int) d5, (int) d7, (int) d6, (int) d8);
         int i1 = 0;
+        // 计算需要填充多少个辅助点
         int j1 = y ? (int) (150D * (d4 / 1000D)) : 15;
         double d9;
         double d10 = (d9 = 30D) * d2;
@@ -518,6 +524,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         A--;
         A %= d9;
         screenGraphics.setColor(Color.WHITE);
+        // 循环画出辅助线上的点
         for (; i1 < j1; i1++) {
             if (d12 < e[0]) {
                 d12 = e[0] - d12;
@@ -543,10 +550,13 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         }
     }
 
+    /**
+     * 设定最大的击打距离
+     * 计算击打距离
+     */
     public double n() {
         if (y) {
-            return Math.min(1000D,
-                    10D * Math.hypot(i[0] - (double) w, j[0] - (double) x));
+            return Math.min(1000D, 10D * Math.hypot(i[0] - (double) w, j[0] - (double) x));
         } else {
             return Math.min(1000D, 10D * Math.hypot(u - w, v - x));
         }
