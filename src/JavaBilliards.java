@@ -27,51 +27,71 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
     // 台桌
     private Image _table;
 
+    // 边界起始点和长
     private double c[];
 
+    // 边界起始点和宽
     private double d[];
 
+    // 球台起始点和长
     private double e[];
 
+    // 球台起始点和宽
     private double f[];
 
+    // 球的个数
     private int countBall;
 
+    // 在场球的个数
     private int h;
 
+    // 球的X坐标
     private double i[];
 
+    // 球的Y坐标
     private double j[];
 
+    // 水平速度
     private double k[];
 
+    // 垂直速度
     private double l[];
 
+    // 数据和i一样
     private double m[];
 
+    // 数据和j一样
     private double n[];
 
     private double o[];
 
     private double p[];
 
+    // 记录球是否还在场
     private boolean q[];
 
+    // 球的大小
     private double r;
 
     // 是否开始游戏
     private int a;
 
+    // 鼠标的X坐标
     private int u;
 
+    // 鼠标的Y坐标
     private int v;
 
+    // 鼠标的X坐标
     private int w;
 
+    // 鼠标的Y坐标
     private int x;
 
+    // 监听鼠标按下状态用于辅助线绘制
     private boolean y;
 
+    // 球杆长度
     private int z;
 
     private int A;
@@ -150,9 +170,8 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         hitBall();
     }
 
-    /** */
     /**
-     * 打击用球数值
+     * 白球位置初始化
      *
      */
     public void hitBall() {
@@ -163,9 +182,8 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         q[0] = true;
     }
 
-    /** */
     /**
-     * 打击对象
+     * 红球位置初始化
      *
      */
     public void hitObject() {
@@ -234,14 +252,14 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
             switch (a) {
                 default:
                     break;
-
+                // 绘制辅助线
                 case 1:
                     // 根据时间换算运动轨迹
                     conversion(timeEnd - timeStart);
                     // 过程处理
                     course();
                     break;
-
+                // 击球
                 case 2:
                     conversion(timeEnd - timeStart);
                     // 过程处理
@@ -249,18 +267,19 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                     boolean flag = true;
                     for (int i1 = 0; flag && i1 < countBall; i1++)
                         flag = k[i1] == 0.0D && l[i1] == 0.0D;
-
+                    // 所有球都是静止的
                     if (flag) {
                         a = 1;
-                        // 击球
+                        // 白球入袋后的初始化
                         if (!q[0]) {
                             hitBall();
                         }
                     }
                     if (h == 0)
+                        // 所有红球入袋，游戏结束
                         a = 3;
                     break;
-
+                // 游戏结束
                 case 3:
                     hitObject();
                     hitBall();
@@ -293,11 +312,9 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
             }
     }
 
-    /** */
     /**
      * 变换时间为动作数据
      *
-     * @param value
      */
     public void conversion(long value) {
         double d1 = (double) value / 1000D;
@@ -315,6 +332,10 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     }
 
+    /***
+     * 是否入袋的计算过程
+     *
+     */
     public void pocket() {
         for (int i1 = 0; i1 < countBall; i1++)
             if (q[i1]) {
@@ -335,10 +356,15 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     }
 
+    /***
+     * 球的动量分配过程
+     *
+     */
     public void play() {
         for (int i1 = 0; i1 < countBall; i1++)
             if (q[i1]) {
                 for (int j1 = i1 + 1; j1 < countBall; j1++) {
+                    // 球是否相撞
                     boolean flag;
                     if (q[j1] && (flag = randball(i1, j1))) {
                         for (int k1 = 0; k1 < 10 && flag; k1++) {
@@ -385,12 +411,15 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
             }
     }
 
+    /***
+     * 计算两球距离
+     *
+     */
     public boolean randball(int i1, int j1) {
-        // hypot随机决定两值之一
+        // 两球距离
         return Math.hypot(m[i1] - m[j1], n[i1] - n[j1]) < 2D * r;
     }
 
-    /** */
     /**
      * 限制区域
      *
@@ -416,6 +445,10 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     }
 
+    /**
+     * 绘制球台
+     *
+     */
     public void makeScreen(Graphics screenGraphics) {
         screenGraphics.drawImage(_table, 0, 0, null);
         // 设置白球
@@ -430,17 +463,18 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
             if (q[i1])
                 screenGraphics.fillOval((int) (i[i1] - r), (int) (j[i1] - r),
                         (int) (r * 2D), (int) (r * 2D));
-
+        // 设置球袋
         screenGraphics.setColor(Color.BLACK);
         for (int j1 = 0; j1 < countBall; j1++)
             if (q[j1]) {
                 screenGraphics.drawOval((int) (i[j1] - r), (int) (j[j1] - r),
                         (int) (r * 2D), (int) (r * 2D));
             }
-
+        // 状态1为辅助线
         if (a == 1) {
             makeHelper(screenGraphics);
         }
+        // 状态0为未开始游戏
         if (a == 0) {
             int k1 = getWidth() / 2 - 85;
             int l1 = getHeight() / 2;
@@ -455,20 +489,22 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         }
     }
 
-    /** */
     /**
      * 绘制球杆及辅助线
      *
-     * @param screenGraphics
      */
     public void makeHelper(Graphics screenGraphics) {
         double d1 = Math.hypot(i[0] - (double) u, j[0] - (double) v);
         double d2 = ((double) u - i[0]) / d1;
         double d3 = ((double) v - j[0]) / d1;
         double d4 = y ? n() / 10D : 1.0D;
+        // 球杆起点X坐标
         double d5 = i[0] + d2 * (r + d4);
+        // 球杆终点Y坐标
         double d6 = i[0] + d2 * (r + (double) z + d4);
+        // 球杆起点Y坐标
         double d7 = j[0] + d3 * (r + d4);
+        // 球杆终点Y坐标
         double d8 = j[0] + d3 * (r + (double) z + d4);
         screenGraphics.setColor(Color.ORANGE);
         screenGraphics.drawLine((int) d5, (int) d7, (int) d6, (int) d8);
@@ -531,6 +567,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     public void mouseReleased(MouseEvent mouseevent) {
         if (a == 1) {
+            // 计算平方和的平方根
             double d1 = Math.hypot(i[0] - (double) u, j[0] - (double) v);
             double d2 = (i[0] - (double) u) / d1;
             double d3 = (j[0] - (double) v) / d1;
@@ -571,5 +608,4 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
     public static void main(String args[]) {
         new JavaBilliards();
     }
-
 }
