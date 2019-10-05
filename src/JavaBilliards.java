@@ -63,8 +63,10 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
     // 数据和j一样
     private double n[];
 
+    // k的中间运算
     private double o[];
 
+    // l的中间运算
     private double p[];
 
     // 记录球是否还在场
@@ -206,7 +208,6 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         }
     }
 
-    /** */
     /**
      * 绘制台球桌
      *
@@ -279,7 +280,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                         // 所有红球入袋，游戏结束
                         a = 3;
                     break;
-                // 游戏结束
+                // 游戏结束后重新开始
                 case 3:
                     hitObject();
                     hitBall();
@@ -318,7 +319,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
 
     /**
      * 变换时间为动作数据
-     *
+     * s=vt
      */
     public void conversion(long value) {
         double d1 = (double) value / 1000D;
@@ -385,24 +386,31 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                         double d1 = m[j1] - m[i1];
                         double d2 = n[j1] - n[i1];
                         double d3 = Math.hypot(m[i1] - m[j1], n[i1] - n[j1]);
+                        // cos
                         double d4 = d1 / d3;
+                        // sin
                         double d5 = d2 / d3;
+
                         o[j1] = k[j1] - k[j1] * d4 * d4;
                         o[j1] -= l[j1] * d4 * d5;
                         o[j1] += k[i1] * d4 * d4;
                         o[j1] += l[i1] * d4 * d5;
+
                         p[j1] = l[j1] - l[j1] * d5 * d5;
                         p[j1] -= k[j1] * d4 * d5;
                         p[j1] += k[i1] * d4 * d5;
                         p[j1] += l[i1] * d5 * d5;
+
                         o[i1] = k[i1] - k[i1] * d4 * d4;
                         o[i1] -= l[i1] * d4 * d5;
                         o[i1] += k[j1] * d4 * d4;
                         o[i1] += l[j1] * d4 * d5;
+
                         p[i1] = l[i1] - l[i1] * d5 * d5;
                         p[i1] -= k[i1] * d4 * d5;
                         p[i1] += k[j1] * d4 * d5;
                         p[i1] += l[j1] * d5 * d5;
+
                         k[i1] = o[i1];
                         l[i1] = p[i1];
                         k[j1] = o[j1];
@@ -447,7 +455,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
     }
 
     /**
-     * 绘制球台
+     * 绘制前景
      *
      */
     public void makeScreen(Graphics screenGraphics) {
