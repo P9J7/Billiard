@@ -1,13 +1,14 @@
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Panel;
+import sun.util.cldr.CLDRLocaleDataMetaInfo;
+
+import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
 
@@ -104,7 +105,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
         z = 300;
         A = 0;
 //        setBounds(50, 50, 700, 350);
-        Frame frame = new Frame("花式撞球");
+        Frame frame = new Frame("美式黑八");
         frame.add(this);
         frame.setBounds(500, 250, 700, 380);
         frame.setResizable(false);
@@ -275,9 +276,13 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                         if (!q[0]) {
                             hitBall();
                         }
+                        //有一方误进黑8输球，游戏重新开始
+                        if (((q[1]||q[2]||q[3]||q[4]||q[5]||q[6]||q[7])&&!q[8]) || ((q[9]||q[10]||q[11]||q[12]||q[13]||q[14]||q[15])&&!q[8])) {
+                            a = 3;
+                        }
                     }
-                    if (h == 0)
-                        // 所有红球入袋，游戏结束
+                    if ((!q[1]&&!q[2]&&!q[3]&&!q[4]&&!q[5]&&!q[6]&&!q[7]&&!q[8]) || (!q[9]&&!q[10]&&!q[11]&&!q[12]&&!q[13]&&!q[14]&&!q[15]&&!q[8]))
+                        // 有一方所有球入袋，游戏结束
                         a = 3;
                     break;
                 // 游戏结束后重新开始
@@ -287,7 +292,6 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                     a = 0;
                     break;
             }
-
             repaint();
             timeStart = timeEnd;
             try {
@@ -322,7 +326,7 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
      * s=vt
      */
     public void conversion(long value) {
-        double d1 = (double) value / 1000D;
+        double d1 = (double) value / 500D;
         for (int i1 = 0; i1 < countBall; i1++)
             if (q[i1]) {
                 m[i1] = i[i1] + k[i1] * d1;
@@ -451,9 +455,10 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
                     l[i] *= -1D;
                 }
             }
-
     }
 
+
+    private static final Color[] colors = {Color.BLACK, Color.YELLOW, Color.BLUE, Color.RED, Color.decode("#800080"), Color.ORANGE, Color.GREEN, Color.decode("#A52A2A")};
     /**
      * 绘制前景
      *
@@ -466,12 +471,28 @@ public class JavaBilliards extends Panel implements Runnable, MouseListener,
             _graphics.fillOval((int) (i[0] - r), (int) (j[0] - r),
                     (int) (r * 2D), (int) (r * 2D));
         }
-        // 设置红球
-        screenGraphics.setColor(Color.RED);
-        for (int i1 = 1; i1 < countBall; i1++)
-            if (q[i1])
+        // 设置一方颜色
+        for (int i1 = 1; i1 < countBall/2; i1++) {
+            if (q[i1]) {
+                screenGraphics.setColor(Color.WHITE);
+                screenGraphics.fillOval((int) (i[i1] - r), (int) (j[i1] - r),
+                        (int) (r * 2D), (int) (r*2D));
+                screenGraphics.setColor(colors[i1]);
+                screenGraphics.fillRoundRect((int) (i[i1] - r/2), (int) (j[i1] - r),
+                        (int) r, (int) (r * 2D), 5, 5);
+            }
+        }
+        //设置另一方颜色
+        for (int i1 = countBall/2; i1 < countBall; i1++) {
+            if (q[i1]) {
+                screenGraphics.setColor(colors[i1%8]);
                 screenGraphics.fillOval((int) (i[i1] - r), (int) (j[i1] - r),
                         (int) (r * 2D), (int) (r * 2D));
+                screenGraphics.setColor(Color.WHITE);
+                screenGraphics.fillOval((int) (i[i1] - r/2), (int) (j[i1] - r/2),
+                        (int) r, (int) r);
+            }
+        }
         // 设置球袋
         screenGraphics.setColor(Color.BLACK);
         for (int j1 = 0; j1 < countBall; j1++)
